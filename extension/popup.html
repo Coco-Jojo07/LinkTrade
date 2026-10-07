@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ViewLink Local</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>ViewLink Local</h1>
+    <button id="readBtn" type="button">Read chart</button>
+  </header>
+
+  <div id="status" class="status info" role="status">Reading chart...</div>
+
+  <form id="tradeForm" autocomplete="off">
+    <div class="grid">
+      <label>Symbol <input id="symbol" type="text" maxlength="24" spellcheck="false"></label>
+      <label>Lots <input id="lots" type="number" min="0.01" max="100" step="0.01"></label>
+      <label>Side
+        <select id="side">
+          <option value="buy">buy</option>
+          <option value="sell">sell</option>
+        </select>
+      </label>
+      <label>Order
+        <select id="order">
+          <option value="market">market</option>
+          <option value="limit">limit</option>
+          <option value="stop">stop</option>
+        </select>
+      </label>
+      <label>Entry <input id="entry" type="number" min="0" step="any"></label>
+      <label>SL <input id="sl" type="number" min="0" step="any"></label>
+      <label>TP <input id="tp" type="number" min="0" step="any"></label>
+    </div>
+    <p class="hint">Market orders execute at the MT5 price; Entry is used only for checks. 0 = no SL/TP.</p>
+    <button id="executeBtn" type="submit" class="primary" disabled>Execute</button>
+  </form>
+
+  <div id="report" class="status hidden" role="status"></div>
+
+  <details id="settings">
+    <summary>Settings</summary>
+    <label>Bridge URL <input id="bridgeUrl" type="text" spellcheck="false"></label>
+    <label>API key <input id="apiKey" type="password" spellcheck="false"></label>
+    <label>Broker symbol suffix <input id="symbolSuffix" type="text" maxlength="8" spellcheck="false" placeholder="e.g. .m"></label>
+    <label>Default lots <input id="defaultLots" type="number" min="0.01" max="100" step="0.01"></label>
+    <button id="saveBtn" type="button">Save settings</button>
+    <span id="saveStatus" class="small"></span>
+  </details>
+
+  <script src="popup.js"></script>
+</body>
+</html>

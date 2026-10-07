@@ -1,0 +1,45 @@
+// ViewLink Local - trade signal indicator for TradingView (Pine Script v5)
+//
+// Publishes Entry, SL, TP and an order-type code as exactly 4 plots, in this
+// order. The ViewLink Chrome extension reads them from the chart legend and
+// finds this indicator by its title, which must contain "ViewLink".
+//
+// Type code: 1 buy market, 2 buy limit, 3 buy stop,
+//           -1 sell market, -2 sell limit, -3 sell stop.
+//
+// Nothing is sent automatically: the values are only displayed. The trader
+// confirms every order in the extension popup.
+
+//@version=5
+indicator("ViewLink Signal", shorttitle = "ViewLink", overlay = true)
+
+// ---------------------------------------------------------------- inputs
+directionInput = input.string("Buy", "Direction", options = ["Buy", "Sell"])
+orderInput     = input.string("Market", "Order type", options = ["Market", "Limit", "Stop"])
+entryInput     = input.float(0.0, "Entry price (0 = last close)", minval = 0.0)
+slInput        = input.float(0.0, "Stop loss (0 = auto)", minval = 0.0)
+tpInput        = input.float(0.0, "Take profit (0 = auto)", minval = 0.0)
+atrLength      = input.int(14, "ATR length", minval = 1)
+atrMult        = input.float(1.5, "ATR multiplier for SL", minval = 0.1, step = 0.1)
+rrRatio        = input.float(2.0, "Risk/reward ratio", minval = 0.1, step = 0.1)
+
+// ---------------------------------------------------------------- logic
+isBuy = directionInput == "Buy"
+atr   = ta.atr(atrLength)
+
+entry  = entryInput > 0 ? entryInput : close
+autoSl = isBuy ? entry - atr * atrMult : entry + atr * atrMult
+sl     = slInput > 0 ? slInput : math.max(autoSl, 0.0)
+slDist = math.abs(entry - sl)
+autoTp = isBuy ? entry + slDist * rrRatio : entry - slDist * rrRatio
+tp     = tpInput > 0 ? tpInput : math.max(autoTp, 0.0)
+
+orderCode = orderInput == "Market" ? 1 : orderInput == "Limit" ? 2 : 3
+typeCode  = isBuy ? orderCode : -orderCode
+
+// ---------------------------------------------------------------- plots
+// Keep exactly these 4 plots in this order: the extension relies on it.
+plot(entry, "Entry", color = color.new(color.blue, 0), linewidth = 2, display = display.all)
+plot(sl, "SL", color = color.new(color.red, 0), linewidth = 2, display = display.all)
+plot(tp, "TP", color = color.new(color.green, 0), linewidth = 2, display = display.all)
+plot(typeCode, "Type", color = color.new(color.gray, 0), display = display.status_line + display.data_window)

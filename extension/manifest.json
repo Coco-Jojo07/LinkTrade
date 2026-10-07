@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "ViewLink Local",
+  "version": "1.0.0",
+  "description": "Send a trade read from a TradingView chart to a local MetaTrader 5 bridge, after manual confirmation.",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": [
+    "https://*.tradingview.com/*",
+    "http://127.0.0.1:8787/*"
+  ],
+  "action": {
+    "default_title": "ViewLink Local",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.tradingview.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
